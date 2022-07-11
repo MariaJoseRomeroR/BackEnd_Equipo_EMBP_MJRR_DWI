@@ -113,5 +113,30 @@
                 return false;
             }
         }
+
+        public function delete($id)
+        { 
+            $this -> conexion -> OpenConnection();
+            $Connsql = $this -> conexion -> GetConnection();
+
+            try{
+                if($Connsql){
+                    $Connsql -> beginTransaction();
+                    $sqlStatment = $Connsql -> prepare(
+                        "DELETE FROM usuario where id=:id"
+                    );
+                   
+                    $sqlStatment -> bindParam(':id', $id); 
+                    $sqlStatment -> execute();
+                    $Connsql -> commit();
+                    
+                    return $id;
+                    
+                }
+            }catch(PDOException $e){
+                $Connsql -> rollback();
+                return 0;
+            }
+        }
     }
 ?>
