@@ -76,5 +76,42 @@
                 }
                 return $arrayUsuario;
         }
+
+        public function update($usuarioDTO)
+        {
+            $this -> conexion -> OpenConnection();
+            $Connsql = $this -> conexion -> GetConnection();
+
+            try{
+                if($Connsql){
+                    $Connsql -> beginTransaction();
+                    $sqlStatment = $Connsql -> prepare(
+                        "UPDATE usuario SET
+                            imagen = :imagen,
+                            nombre = :nombre,
+                            a_paterno = :a_paterno,
+                            a_materno = :a_materno,
+                            usuario = :usuario,
+                            contrasena = :contrasena 
+                            WHERE id = :id"
+                    );
+
+                    $sqlStatment -> bindParam(':id', $usuarioDTO->id);
+                    $sqlStatment -> bindParam(':imagen', $usuarioDTO->imagen);
+                    $sqlStatment -> bindParam(':nombre', $usuarioDTO->nombre);
+                    $sqlStatment -> bindParam(':a_paterno', $usuarioDTO->a_paterno);
+                    $sqlStatment -> bindParam(':a_materno', $usuarioDTO->a_materno);
+                    $sqlStatment -> bindParam(':usuario', $usuarioDTO->usuario);
+                    $sqlStatment -> bindParam(':contrasena', $usuarioDTO->contrasena);
+                    $sqlStatment -> execute();
+
+                    $Connsql -> commit();
+                    return true;
+                }
+            }catch(PDOException $e){
+                $Connsql -> rollback();
+                return false;
+            }
+        }
     }
 ?>
