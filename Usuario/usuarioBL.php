@@ -47,5 +47,34 @@
             }
             return $lastInsertId;
         }
+
+        public function read($id)
+        {
+            $this -> conexion -> OpenConnection();
+            $Connsql = $this -> conexion -> GetConnection();
+            $arrayUsuario = new ArrayObject();
+            $SQLQuery = "SELECT * FROM usuario";
+
+            if($id > 0)
+                $SQLQuery = "SELECT * FROM usuario WHERE id = {$id}";
+                try{
+                    if($Connsql)
+                        foreach($Connsql->query($SQLQuery) as $row){
+                            $usuarioDTO = new UsuarioDTO();
+                            $usuarioDTO -> id = $row['id'];
+                            $usuarioDTO -> imagen = $row['imagen'];
+                            $usuarioDTO -> nombre = $row['nombre'];
+                            $usuarioDTO -> a_paterno = $row['a_paterno'];
+                            $usuarioDTO -> a_materno = $row['a_materno'];
+                            $usuarioDTO -> usuario = $row['usuario'];
+                            $usuarioDTO -> contrasena = $row['contrasena'];
+                            $arrayUsuario->append($usuarioDTO);
+                        }
+
+                } catch(PDOException $e){
+
+                }
+                return $arrayUsuario;
+        }
     }
 ?>
