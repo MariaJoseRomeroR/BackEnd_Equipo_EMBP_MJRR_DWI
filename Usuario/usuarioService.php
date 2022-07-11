@@ -59,5 +59,57 @@
         }                                                                  
     }
 
+    $usuarioService = new UsuarioService();
+    $usuarioDTO = new UsuarioDTO();
 
+    $data = json_decode(file_get_contents("php://input"), true); 
+
+    switch($_SERVER['REQUEST_METHOD']){
+        case 'POST':
+            { 
+                if(empty($data)) {
+                    $usuarioDTO -> response = array('CODE' => 'Error', 'MESSAGE' => 'Faltan valores');
+                    echo json_encode($usuarioDTO->response, JSON_PRETTY_PRINT);
+                } else {
+                    $usuarioService -> create($data['imagen'], $data['nombre'], $data['a_paterno'], $data['a_materno'], $data['usuario'], $data['contrasena']);
+                }
+            break;
+            }
+        case 'GET':
+            {
+                if(empty($_GET['param'])) {
+                    $usuarioService -> read(0);
+                } else if(is_numeric($_GET['param'])){
+                    $usuarioService -> read($_GET['param']);
+                } else {
+                    $usuarioDTO -> response = array('CODE' => 'Error', 'MESSAGE' => 'El parametro incorrecto');
+                    echo json_encode($usuarioDTO->response, JSON_PRETTY_PRINT);
+                }
+            break;
+            }
+        case 'PUT':
+            {
+                if(empty($_GET['param'])) {
+                    $usuarioDTO -> response = array('CODE' => 'Error', 'MESSAGE' => 'Faltan valores');
+                    echo json_encode($usuarioDTO->response, JSON_PRETTY_PRINT);
+                } else {
+                    $usuarioService ->update($_GET['param'], $data['imagen'], $data['nombre'], $data['a_paterno'], $data['a_materno'], $data['usuario'], $data['contrasena']);
+                }
+            break;
+            }
+        case 'DELETE':
+            {
+                if(empty($_GET['param'])) {
+                    $usuarioDTO -> response = array('CODE' => 'Error', 'MESSAGE' => 'Falta el Id');
+                    echo json_encode($usuarioDTO->response, JSON_PRETTY_PRINT);
+                } else {
+                    $usuarioService -> delete($_GET['param']);
+                }
+            break;
+            }
+        default:
+                $usuarioDTO -> response = array('CODE' => 'Error', 'TEXT' => 'Petición incorrecta');
+                echo json_encode($usuarioDTO->response, JSON_PRETTY_PRINT);
+            break;
+    }
 ?>
